@@ -15,6 +15,10 @@
     "nvim-emmet": {
       "rev": "cde4fb2968704aae5c18b7f8a9bc2508767bb78d",
       "src": "https://github.com/olrtg/nvim-emmet"
+    },
+    "vim-moonfly-colors": {
+      "rev": "261664f92ed51cf0c077555b2d4b2530307eac17",
+      "src": "https://github.com/bluz71/vim-moonfly-colors"
     }
   }
 }

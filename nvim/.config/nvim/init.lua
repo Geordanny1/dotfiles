@@ -8,15 +8,29 @@ vim.o.expandtab = true
 vim.o.softtabstop = 2
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
-      
 
 vim.keymap.set("n","<leader>w",":w<CR>")
 vim.keymap.set("n","<leader>e",":Explore<CR>")
 
 
 vim.pack.add({
-  {src = "https://github.com/mattn/emmet-vim"}
+  {src = "https://github.com/mattn/emmet-vim"},
+  {src = "https://github.com/bluz71/vim-moonfly-colors"},
+  {src = 'https://github.com/nvim-mini/mini.nvim' }
 })
+
+-- Lua initialization file
+vim.g.moonflyTransparent = true
+
+-- Lua initialization file
+vim.cmd [[colorscheme moonfly]]
+
+-- Lua initialization file
+
+require('mini.surround').setup()
+require('mini.pairs').setup()
+require('mini.statusline').setup()
+require('mini.starter').setup()
 
 vim.g.user_emmet_settings = {
   variables = { lang = 'en-US' },

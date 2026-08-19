@@ -20,6 +20,10 @@
       "rev": "cde4fb2968704aae5c18b7f8a9bc2508767bb78d",
       "src": "https://github.com/olrtg/nvim-emmet"
     },
+    "onedark.nvim": {
+      "rev": "df4792accde9db0043121f32628bcf8e645d9aea",
+      "src": "https://github.com/navarasu/onedark.nvim"
+    },
     "vague.nvim": {
       "rev": "161384e625e7b6cca118a3fa66225ba5cacdfb50",
       "src": "https://github.com/vague-theme/vague.nvim"

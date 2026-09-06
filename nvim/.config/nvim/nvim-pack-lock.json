@@ -8,6 +8,18 @@
       "rev": "85a86eb62409e3ec88713bff3d1b9d7374e112e4",
       "src": "https://github.com/sainnhe/everforest"
     },
+    "flash.nvim": {
+      "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
+      "src": "https://github.com/folke/flash.nvim"
+    },
+    "gruber-darker.nvim": {
+      "rev": "83d99c0eb0fa2513fa5268d097194801fad26660",
+      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "leap.nvim": {
+      "rev": "38af0ab56c6eb8757ee6006dd13ab79c2bc11a49",
+      "src": "https://codeberg.org/andyg/leap.nvim"
+    },
     "mason.nvim": {
       "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
       "src": "https://github.com/mason-org/mason.nvim"
@@ -16,9 +28,17 @@
       "rev": "f28b0294daf3bdbacfece1f6c3c4d21a1cc33655",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
+    "nvim": {
+      "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
+      "src": "https://github.com/catppuccin/nvim"
+    },
     "nvim-emmet": {
       "rev": "cde4fb2968704aae5c18b7f8a9bc2508767bb78d",
       "src": "https://github.com/olrtg/nvim-emmet"
+    },
+    "oceanic-next": {
+      "rev": "09833f72d5ba23de2e8bcae18f479f326f5f677a",
+      "src": "https://github.com/mhartington/oceanic-next"
     },
     "onedark.nvim": {
       "rev": "df4792accde9db0043121f32628bcf8e645d9aea",
@@ -27,6 +47,14 @@
     "vague.nvim": {
       "rev": "161384e625e7b6cca118a3fa66225ba5cacdfb50",
       "src": "https://github.com/vague-theme/vague.nvim"
+    },
+    "vim-flash": {
+      "rev": "65881d43e966a093d77b76b5057793d5b656ff05",
+      "src": "https://github.com/yelog/vim-flash"
+    },
+    "vim-grepper": {
+      "rev": "74284df0abf7c3f9d57e3416129dbeeba36dc86b",
+      "src": "https://github.com/mhinz/vim-grepper"
     },
     "vim-moonfly-colors": {
       "rev": "261664f92ed51cf0c077555b2d4b2530307eac17",

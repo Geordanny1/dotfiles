@@ -4,77 +4,29 @@
       "rev": "92ef2f74f4093edc99db5e9e4cf7e40116a85bd6",
       "src": "https://github.com/mattn/emmet-vim"
     },
-    "everforest": {
-      "rev": "85a86eb62409e3ec88713bff3d1b9d7374e112e4",
-      "src": "https://github.com/sainnhe/everforest"
-    },
-    "firenvim": {
-      "rev": "302c105ff79c51d3d362eb37210f95f65285926d",
-      "src": "https://github.com/glacambre/firenvim"
-    },
     "flash.nvim": {
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
     },
-    "gruber-darker.nvim": {
-      "rev": "83d99c0eb0fa2513fa5268d097194801fad26660",
-      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
-    },
-    "himalaya.nvim": {
-      "rev": "1ad45468fdb44cc705ec6d69f0d389b233e7b14e",
-      "src": "https://github.com/knownasnaffy/himalaya.nvim"
-    },
-    "kanagawa.nvim": {
-      "rev": "bb85e4bfc8d89b0e62c8fa53ccdd13d12e2f77b3",
-      "src": "https://github.com/rebelot/kanagawa.nvim"
-    },
-    "leap.nvim": {
-      "rev": "38af0ab56c6eb8757ee6006dd13ab79c2bc11a49",
-      "src": "https://codeberg.org/andyg/leap.nvim"
-    },
-    "markdown-preview.nvim": {
-      "rev": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee",
-      "src": "https://github.com/iamcco/markdown-preview.nvim"
-    },
-    "mason.nvim": {
-      "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
-      "src": "https://github.com/mason-org/mason.nvim"
+    "github-nvim-theme": {
+      "rev": "c106c9472154d6b2c74b74565616b877ae8ed31d",
+      "src": "https://github.com/projekt0n/github-nvim-theme"
     },
     "mini.nvim": {
       "rev": "f28b0294daf3bdbacfece1f6c3c4d21a1cc33655",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
-    "modus-themes.nvim": {
-      "rev": "56233f0986ef6c8d0eab97e924e87144e584d970",
-      "src": "https://github.com/miikanissi/modus-themes.nvim"
-    },
-    "molokai": {
-      "rev": "c67bdfcdb31415aa0ade7f8c003261700a885476",
-      "src": "https://github.com/tomasr/molokai"
-    },
-    "nui.nvim": {
-      "rev": "10fc361835c856ba4233ef5ea135b919bf3dce97",
-      "src": "https://github.com/MunifTanjim/nui.nvim"
-    },
-    "nvim": {
-      "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
-      "src": "https://github.com/catppuccin/nvim"
-    },
-    "nvim-emmet": {
-      "rev": "cde4fb2968704aae5c18b7f8a9bc2508767bb78d",
-      "src": "https://github.com/olrtg/nvim-emmet"
-    },
-    "oceanic-next": {
-      "rev": "09833f72d5ba23de2e8bcae18f479f326f5f677a",
-      "src": "https://github.com/mhartington/oceanic-next"
-    },
-    "onedark.nvim": {
-      "rev": "df4792accde9db0043121f32628bcf8e645d9aea",
-      "src": "https://github.com/navarasu/onedark.nvim"
+    "nvim-treesitter": {
+      "rev": "f603a2f4da48728f80257fb5fbb90145fd1dc173",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "render-markdown.nvim": {
+      "rev": "640a3ec6d538bad17c328be373c7cad0293d9589",
+      "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "telescope-fzf-native.nvim": {
       "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",
@@ -85,24 +37,16 @@
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
     "vague.nvim": {
-      "rev": "161384e625e7b6cca118a3fa66225ba5cacdfb50",
+      "rev": "f9060fdaf7b20f68575d6f8214da6f1cf0c72825",
       "src": "https://github.com/vague-theme/vague.nvim"
     },
-    "vim-flash": {
-      "rev": "65881d43e966a093d77b76b5057793d5b656ff05",
-      "src": "https://github.com/yelog/vim-flash"
+    "vim-jinja2-syntax": {
+      "rev": "2c17843b074b06a835f88587e1023ceff7e2c7d1",
+      "src": "https://github.com/glench/vim-jinja2-syntax"
     },
-    "vim-grepper": {
-      "rev": "74284df0abf7c3f9d57e3416129dbeeba36dc86b",
-      "src": "https://github.com/mhinz/vim-grepper"
-    },
-    "vim-moonfly-colors": {
-      "rev": "261664f92ed51cf0c077555b2d4b2530307eac17",
-      "src": "https://github.com/bluz71/vim-moonfly-colors"
-    },
-    "vimwiki": {
-      "rev": "a54a3002e229c4b43d69ced170ff77663a5b2c40",
-      "src": "https://github.com/vimwiki/vimwiki"
+    "wiki.vim": {
+      "rev": "dd7f5d8bd7742c2200ebdfeb1ccb756fbe0285b1",
+      "src": "https://github.com/lervag/wiki.vim"
     }
   }
 }

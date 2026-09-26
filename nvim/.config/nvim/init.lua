@@ -43,6 +43,15 @@ require('mini.misc').setup()
 MiniMisc.setup_auto_root()
 require('flash').setup()
 
+
+require("pyrepl").setup({
+  keymaps = {
+    toggle = "<leader>pr",
+    run = "<leader>rr",
+    open = "<leader>ro",
+  },
+})
+
 vim.g.wiki_root = '~/wiki'
 
 require('vague').setup({
@@ -112,7 +121,10 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep,  { desc = 'Telescope live g
 vim.keymap.set('n', '<leader>fb', builtin.buffers,    { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags,  { desc = 'Telescope help tags' })
 
-vim.keymap.set('i', 'jk', '<ESC>') 
+vim.keymap.set("n", "<leader>fc", function()
+  require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })
+end, { desc = "Find config files" })
+
 vim.keymap.set('n', '<leader>ec', ':e $MYVIMRC<CR>')
 
 vim.keymap.set('n', '<leader>f', ':lua MiniFiles.open()<CR>')

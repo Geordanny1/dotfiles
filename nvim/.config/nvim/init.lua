@@ -1,6 +1,10 @@
 vim.o.guicursor = 'i:block'
 vim.g.mapleader = ' '
 
+vim.o.cursorline = true
+
+vim.o.textwidth   = 80
+
 vim.o.number         = true
 vim.o.relativenumber = true
 
@@ -17,7 +21,8 @@ vim.cmd('syntax on')
 vim.pack.add({
 
   {src = 'https://github.com/mattn/emmet-vim'},
-  {src = 'https://github.com/nvim-mini/mini.nvim' },
+  {src = 'https://github.com/nvim-mini/mini.nvim'},
+
 
   {src = 'https://github.com/nvim-lua/plenary.nvim'},
   {src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim'},
@@ -27,30 +32,15 @@ vim.pack.add({
 
   {src = 'https://github.com/vague-theme/vague.nvim' },
 
-  {src = 'https://github.com/nvim-treesitter/nvim-treesitter'},
-  {src = 'https://github.com/MeanderingProgrammer/render-markdown.nvim' },
   {src = 'https://github.com/glench/vim-jinja2-syntax' },
 })
 
 
-require('mini.surround').setup()
 require('mini.statusline').setup()
-require('mini.completion').setup()
-require('mini.files').setup()
 require('mini.move').setup()
 require('mini.pairs').setup()
-require('mini.misc').setup()
-MiniMisc.setup_auto_root()
 require('flash').setup()
-
-
-require("pyrepl").setup({
-  keymaps = {
-    toggle = "<leader>pr",
-    run = "<leader>rr",
-    open = "<leader>ro",
-  },
-})
+require('mini.surround').setup()
 
 vim.g.wiki_root = '~/wiki'
 
@@ -89,16 +79,15 @@ require('vague').setup({
 vim.cmd[[colorscheme vague]]
 
 local builtin = require('telescope.builtin')
+
 require('telescope').setup {
-  pickers = {
-    colorscheme = {
-      enable_preview = true
-    }
-  }
+  defaults = require('telescope.themes').get_ivy{
+    layout_config = {
+      height = 10,
+    },
+  },
 }
 
-
-require('nvim-treesitter').install { 'python', 'c', 'javascript', 'markdown', 'markdown_inline', 'jinja', 'jinja_inline' }
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'python', 'c', 'javascript', 'markdown', 'jinja' },
@@ -109,9 +98,6 @@ vim.api.nvim_create_autocmd('FileType', {
 
 vim.filetype.add({
   extension = {
-    j2     = 'jinja',
-    jinja  = 'jinja',
-    jinja2 = 'jinja',
     njk    = 'htmldjango',
   },
 })
@@ -121,21 +107,19 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep,  { desc = 'Telescope live g
 vim.keymap.set('n', '<leader>fb', builtin.buffers,    { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags,  { desc = 'Telescope help tags' })
 
+vim.keymap.set('i', '<C-b>', '<Left>' )
+vim.keymap.set('i', '<C-f>', '<right>' )
+
 vim.keymap.set("n", "<leader>fc", function()
   require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })
 end, { desc = "Find config files" })
 
 vim.keymap.set('n', '<leader>ec', ':e $MYVIMRC<CR>')
-
 vim.keymap.set('n', '<leader>f', ':lua MiniFiles.open()<CR>')
-
 vim.keymap.set('n', '<leader>w', ':w<CR>')
-
 vim.keymap.set('n', '<Esc>', ':noh<CR>')
-
 vim.keymap.set('n', ']q', ':cnext<CR>')
 vim.keymap.set('n', '[q', ':cprevious<CR>')
-
 vim.keymap.set('n', '<leader>o', ':only<CR>')
 
 local function insert_data()
@@ -166,3 +150,11 @@ vim.g.user_emmet_settings = {
     },
   },
 }
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Flash highlight the yanked text',
+  group = vim.api.nvim_create_augroup('highlight-command', { clear = true }),
+  callback = function()
+    vim.highlight.hl_op()
+  end,
+})

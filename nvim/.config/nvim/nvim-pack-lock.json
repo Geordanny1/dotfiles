@@ -1,5 +1,13 @@
 {
   "plugins": {
+    "Sierra": {
+      "rev": "2ec52616385b50f9580176d83209810549128402",
+      "src": "https://github.com/AlessandroYorba/Sierra"
+    },
+    "ayu-vim": {
+      "rev": "01faacb4cb76e8cf72ad9858c581d80876260ab3",
+      "src": "https://github.com/ayu-theme/ayu-vim"
+    },
     "emmet-vim": {
       "rev": "92ef2f74f4093edc99db5e9e4cf7e40116a85bd6",
       "src": "https://github.com/mattn/emmet-vim"
@@ -7,6 +15,10 @@
     "flash.nvim": {
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
+    },
+    "fogbell.vim": {
+      "rev": "274cc13184f6a7d0589650c0763c94cef431b319",
+      "src": "https://github.com/jaredgorski/fogbell.vim"
     },
     "github-nvim-theme": {
       "rev": "c106c9472154d6b2c74b74565616b877ae8ed31d",

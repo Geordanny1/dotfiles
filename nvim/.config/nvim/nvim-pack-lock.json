@@ -24,6 +24,14 @@
       "rev": "c106c9472154d6b2c74b74565616b877ae8ed31d",
       "src": "https://github.com/projekt0n/github-nvim-theme"
     },
+    "jellybeans.vim": {
+      "rev": "ef83bf4dc8b3eacffc97bf5c96ab2581b415c9fa",
+      "src": "https://github.com/nanotech/jellybeans.vim"
+    },
+    "lush.nvim": {
+      "rev": "9c60ec2279d62487d942ce095e49006af28eed6e",
+      "src": "https://github.com/rktjmp/lush.nvim"
+    },
     "mason-lspconfig.nvim": {
       "rev": "137bd0feba2c1885545b6934d36f5e5aa6adb486",
       "src": "https://github.com/mason-org/mason-lspconfig.nvim"
@@ -35,6 +43,10 @@
     "mini.nvim": {
       "rev": "f28b0294daf3bdbacfece1f6c3c4d21a1cc33655",
       "src": "https://github.com/nvim-mini/mini.nvim"
+    },
+    "modus-themes.nvim": {
+      "rev": "15ffb5ab6a12f72ee1e8393fe5810d5317da2d3e",
+      "src": "https://github.com/miikanissi/modus-themes.nvim"
     },
     "nvim-lspconfig": {
       "rev": "a9bb4d5f4276aa5cddc015faa3ecc5a7b5a26b14",
@@ -51,6 +63,10 @@
     "render-markdown.nvim": {
       "rev": "640a3ec6d538bad17c328be373c7cad0293d9589",
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
+    },
+    "techbase.nvim": {
+      "rev": "d5a512548fe37d3c7624ab1d5f7df7326ff6965b",
+      "src": "https://github.com/mcauley-penney/techbase.nvim"
     },
     "telescope-fzf-native.nvim": {
       "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",
@@ -71,6 +87,10 @@
     "wiki.vim": {
       "rev": "dd7f5d8bd7742c2200ebdfeb1ccb756fbe0285b1",
       "src": "https://github.com/lervag/wiki.vim"
+    },
+    "zenbones.nvim": {
+      "rev": "8304d8df9b823ff11e103afa62f38c39f534abe6",
+      "src": "https://github.com/zenbones-theme/zenbones.nvim"
     }
   }
 }

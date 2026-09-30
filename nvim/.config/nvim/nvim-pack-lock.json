@@ -4,6 +4,10 @@
       "rev": "2ec52616385b50f9580176d83209810549128402",
       "src": "https://github.com/AlessandroYorba/Sierra"
     },
+    "alabaster.nvim": {
+      "rev": "cf5f78b24977da98b927132d054fd4589495e746",
+      "src": "https://github.com/mcncl/alabaster.nvim"
+    },
     "ayu-vim": {
       "rev": "01faacb4cb76e8cf72ad9858c581d80876260ab3",
       "src": "https://github.com/ayu-theme/ayu-vim"
@@ -47,6 +51,10 @@
     "modus-themes.nvim": {
       "rev": "15ffb5ab6a12f72ee1e8393fe5810d5317da2d3e",
       "src": "https://github.com/miikanissi/modus-themes.nvim"
+    },
+    "no-clown-fiesta.nvim": {
+      "rev": "04b808e9769ded988089772ffcaf08d92d75d927",
+      "src": "https://github.com/aktersnurra/no-clown-fiesta.nvim"
     },
     "nvim-lspconfig": {
       "rev": "a9bb4d5f4276aa5cddc015faa3ecc5a7b5a26b14",

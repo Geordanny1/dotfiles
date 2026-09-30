@@ -1,0 +1,7 @@
+[window]
+startup_mode = "Maximized"
+padding = { x = 20, y = 10 }
+
+[font]
+size = 20.5
+normal = { family = "Iosevka NF" }

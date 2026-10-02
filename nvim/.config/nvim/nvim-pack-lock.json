@@ -1,17 +1,5 @@
 {
   "plugins": {
-    "Sierra": {
-      "rev": "2ec52616385b50f9580176d83209810549128402",
-      "src": "https://github.com/AlessandroYorba/Sierra"
-    },
-    "alabaster.nvim": {
-      "rev": "cf5f78b24977da98b927132d054fd4589495e746",
-      "src": "https://github.com/mcncl/alabaster.nvim"
-    },
-    "ayu-vim": {
-      "rev": "01faacb4cb76e8cf72ad9858c581d80876260ab3",
-      "src": "https://github.com/ayu-theme/ayu-vim"
-    },
     "emmet-vim": {
       "rev": "92ef2f74f4093edc99db5e9e4cf7e40116a85bd6",
       "src": "https://github.com/mattn/emmet-vim"
@@ -20,61 +8,13 @@
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
     },
-    "fogbell.vim": {
-      "rev": "274cc13184f6a7d0589650c0763c94cef431b319",
-      "src": "https://github.com/jaredgorski/fogbell.vim"
-    },
-    "github-nvim-theme": {
-      "rev": "c106c9472154d6b2c74b74565616b877ae8ed31d",
-      "src": "https://github.com/projekt0n/github-nvim-theme"
-    },
     "jellybeans.vim": {
       "rev": "ef83bf4dc8b3eacffc97bf5c96ab2581b415c9fa",
       "src": "https://github.com/nanotech/jellybeans.vim"
     },
-    "lush.nvim": {
-      "rev": "9c60ec2279d62487d942ce095e49006af28eed6e",
-      "src": "https://github.com/rktjmp/lush.nvim"
-    },
-    "mason-lspconfig.nvim": {
-      "rev": "137bd0feba2c1885545b6934d36f5e5aa6adb486",
-      "src": "https://github.com/mason-org/mason-lspconfig.nvim"
-    },
-    "mason.nvim": {
-      "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
-      "src": "https://github.com/mason-org/mason.nvim"
-    },
-    "mini.nvim": {
-      "rev": "f28b0294daf3bdbacfece1f6c3c4d21a1cc33655",
-      "src": "https://github.com/nvim-mini/mini.nvim"
-    },
-    "modus-themes.nvim": {
-      "rev": "15ffb5ab6a12f72ee1e8393fe5810d5317da2d3e",
-      "src": "https://github.com/miikanissi/modus-themes.nvim"
-    },
-    "no-clown-fiesta.nvim": {
-      "rev": "04b808e9769ded988089772ffcaf08d92d75d927",
-      "src": "https://github.com/aktersnurra/no-clown-fiesta.nvim"
-    },
-    "nvim-lspconfig": {
-      "rev": "a9bb4d5f4276aa5cddc015faa3ecc5a7b5a26b14",
-      "src": "https://github.com/neovim/nvim-lspconfig"
-    },
-    "nvim-treesitter": {
-      "rev": "f603a2f4da48728f80257fb5fbb90145fd1dc173",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
-    },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
-    },
-    "render-markdown.nvim": {
-      "rev": "640a3ec6d538bad17c328be373c7cad0293d9589",
-      "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
-    },
-    "techbase.nvim": {
-      "rev": "d5a512548fe37d3c7624ab1d5f7df7326ff6965b",
-      "src": "https://github.com/mcauley-penney/techbase.nvim"
     },
     "telescope-fzf-native.nvim": {
       "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",
@@ -83,22 +23,6 @@
     "telescope.nvim": {
       "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
-    },
-    "vague.nvim": {
-      "rev": "f9060fdaf7b20f68575d6f8214da6f1cf0c72825",
-      "src": "https://github.com/vague-theme/vague.nvim"
-    },
-    "vim-jinja2-syntax": {
-      "rev": "2c17843b074b06a835f88587e1023ceff7e2c7d1",
-      "src": "https://github.com/glench/vim-jinja2-syntax"
-    },
-    "wiki.vim": {
-      "rev": "dd7f5d8bd7742c2200ebdfeb1ccb756fbe0285b1",
-      "src": "https://github.com/lervag/wiki.vim"
-    },
-    "zenbones.nvim": {
-      "rev": "8304d8df9b823ff11e103afa62f38c39f534abe6",
-      "src": "https://github.com/zenbones-theme/zenbones.nvim"
     }
   }
 }

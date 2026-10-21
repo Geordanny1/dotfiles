@@ -1,5 +1,13 @@
 {
   "plugins": {
+    "alabaster.nvim": {
+      "rev": "b902c73fabefc13583bfc0c18b28950ea8f6244f",
+      "src": "https://github.com/dchinmay2/alabaster.nvim"
+    },
+    "colorbuddy.nvim": {
+      "rev": "8b968581e5c19d22a861d5f3fe5dbd83394fa681",
+      "src": "https://github.com/tjdevries/colorbuddy.nvim"
+    },
     "emmet-vim": {
       "rev": "92ef2f74f4093edc99db5e9e4cf7e40116a85bd6",
       "src": "https://github.com/mattn/emmet-vim"
@@ -8,13 +16,73 @@
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
     },
+    "fzf-lua": {
+      "rev": "9405672f62767695d5f20db171336f7f4911ce86",
+      "src": "https://github.com/ibhagwan/fzf-lua"
+    },
+    "gruber-darker.nvim": {
+      "rev": "35cb97959ef01f7193c94c404c13ddb3d4346654",
+      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "gruvbox": {
+      "rev": "ef8864bb42bf244f0295d1c5a403b27e3d139695",
+      "src": "https://github.com/morhetz/gruvbox"
+    },
+    "haskell-vim": {
+      "rev": "f35d02204b4813d1dbe8b0e98cc39701a4b8e15e",
+      "src": "https://github.com/neovimhaskell/haskell-vim"
+    },
     "jellybeans.vim": {
       "rev": "ef83bf4dc8b3eacffc97bf5c96ab2581b415c9fa",
       "src": "https://github.com/nanotech/jellybeans.vim"
     },
+    "kanagawa.nvim": {
+      "rev": "bb85e4bfc8d89b0e62c8fa53ccdd13d12e2f77b3",
+      "src": "https://github.com/rebelot/kanagawa.nvim"
+    },
+    "lush.nvim": {
+      "rev": "9c60ec2279d62487d942ce095e49006af28eed6e",
+      "src": "https://github.com/rktjmp/lush.nvim"
+    },
+    "neovim": {
+      "rev": "ff483051a47e27d84bdef47703538df1ed9f4a47",
+      "src": "https://github.com/rose-pine/neovim"
+    },
+    "no-clown-fiesta.nvim": {
+      "rev": "04b808e9769ded988089772ffcaf08d92d75d927",
+      "src": "https://github.com/aktersnurra/no-clown-fiesta.nvim"
+    },
+    "nord.nvim": {
+      "rev": "80c1e5321505aeb22b7a9f23eb82f1e193c12470",
+      "src": "https://github.com/shaunsingh/nord.nvim"
+    },
+    "nvim-treesitter": {
+      "rev": "e289100ff98969e118c702199d88b764ce9e7fdf",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "oxide": {
+      "rev": "838760c820821cce6a79706430883439c80dad4c",
+      "src": "https://github.com/oxidescheme/nvim"
+    },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "rasmus.nvim": {
+      "rev": "49f7ee7bf3eb00db52c77f84b15bc69f318bafc1",
+      "src": "https://github.com/kvrohit/rasmus.nvim"
+    },
+    "silentium.nvim": {
+      "rev": "c2c691773492b9a4a339b89628abd85c22e9b070",
+      "src": "https://github.com/silentium-theme/silentium.nvim"
+    },
+    "simple-dark": {
+      "rev": "6c376d8a96861b485151494433dc98b984fa0f8d",
+      "src": "https://github.com/zefei/simple-dark"
+    },
+    "tabular": {
+      "rev": "12437cd1b53488e24936ec4b091c9324cafee311",
+      "src": "https://github.com/godlygeek/tabular"
     },
     "telescope-fzf-native.nvim": {
       "rev": "b25b749b9db64d375d782094e2b9dce53ad53a40",
@@ -23,6 +91,34 @@
     "telescope.nvim": {
       "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
+    },
+    "vague.nvim": {
+      "rev": "73f8aaa866bf3d14dd0b0ab9e48c11794c1cb7ab",
+      "src": "https://github.com/vague-theme/vague.nvim"
+    },
+    "vim-boring": {
+      "rev": "1090b4bde142fbb2f5c9c5cfa08238c5eaeceb2f",
+      "src": "https://github.com/t184256/vim-boring"
+    },
+    "vim-dim": {
+      "rev": "e06f4c29f9bd3971dc27882e67d013fbbafe0596",
+      "src": "https://github.com/jeffkreeftmeijer/vim-dim"
+    },
+    "vim-visual-multi": {
+      "rev": "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
+      "src": "https://github.com/mg979/vim-visual-multi"
+    },
+    "vim-wombat": {
+      "rev": "1df7220ef7f5a23e19362b35b3432f8e2c9b7cd0",
+      "src": "https://github.com/cschlueter/vim-wombat"
+    },
+    "wiki.vim": {
+      "rev": "0253d02bd7745d5b6f4379fb537ed0f0ccfa523c",
+      "src": "https://github.com/lervag/wiki.vim"
+    },
+    "zenbones.nvim": {
+      "rev": "8304d8df9b823ff11e103afa62f38c39f534abe6",
+      "src": "https://github.com/zenbones-theme/zenbones.nvim"
     }
   }
 }

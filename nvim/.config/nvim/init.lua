@@ -15,8 +15,10 @@ vim.pack.add({
 	{src = 'https://github.com/morhetz/gruvbox'},
   {src = 'https://github.com/ibhagwan/fzf-lua'},
 
+  {src = 'https://github.com/nvim-mini/mini.nvim'},
+
 	{src = 'https://github.com/godlygeek/tabular'},
-	{src = 'https://github.com/folke/flash.nvim'},
+	{src = 'https://github.com/mg979/vim-visual-multi'},
 
 	{src = 'https://github.com/nvim-treesitter/nvim-treesitter'},
 	{src = 'https://github.com/mattn/emmet-vim'},
@@ -24,14 +26,23 @@ vim.pack.add({
 
 	{src = 'https://github.com/lervag/wiki.vim'},
 
+	{src = 'https://github.com/craftzdog/solarized-osaka.nvim'},
+
 })
 
-vim.cmd.colorscheme('gruvbox')
+vim.cmd[[colorscheme solarized-osaka]]
 
-require('nvim-treesitter').install { 'markdown', 'latex', 'python', 'haskell' }
+
+require('mini.pairs').setup()
+require('mini.cmdline').setup()
+require('mini.move').setup()
+require('mini.statusline').setup()
+require('mini.surround').setup()
+
+require('nvim-treesitter').install { 'markdown', 'latex', 'python', 'haskell', 'bash', 'cpp' }
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'md', 'python', 'py', 'haskell', 'hs' },
+  pattern = { 'md', 'python', 'py', 'haskell', 'hs', 'cpp', 'c' },
   callback = function() vim.treesitter.start() end,
 })
 
@@ -57,9 +68,6 @@ end)
 
 vim.keymap.set('n', '<leader>l', ':vert belowright sb ' )
 
-vim.keymap.set({'n', 'x', 'o'}, 's', function()
-  require('flash').jump()
-end)
 
 vim.keymap.set('n', '<Esc>', function()
   vim.cmd.noh()
@@ -118,6 +126,7 @@ let g:user_emmet_settings = {
 \  },
 \}
 ]]
+
 vim.api.nvim_create_user_command('InserBlogData', function()
   local current_row = vim.api.nvim_win_get_cursor(0)[1]
 
@@ -155,7 +164,6 @@ vim.pack.add({
 
 	{src = 'https://github.com/godlygeek/tabular'},
 	{src = 'https://github.com/mg979/vim-visual-multi'},
-	{src = 'https://github.com/folke/flash.nvim'},
 
 	{src = 'https://github.com/nvim-treesitter/nvim-treesitter'},
 	{src = 'https://github.com/mattn/emmet-vim'},
@@ -165,12 +173,11 @@ vim.pack.add({
 
 })
 
-vim.cmd.colorscheme('gruvbox')
 
-require('nvim-treesitter').install { 'markdown', 'latex', 'python', 'haskell' }
+require('nvim-treesitter').install { 'markdown', 'latex', 'python', 'haskell', 'cpp', 'c' }
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'md', 'python', 'py', 'haskell', 'hs' },
+  pattern = { 'md', 'python', 'py', 'haskell', 'hs', 'c++', 'c' },
   callback = function() vim.treesitter.start() end,
 })
 
@@ -196,9 +203,6 @@ end)
 
 vim.keymap.set('n', '<leader>l', ':vert belowright sb ' )
 
-vim.keymap.set({'n', 'x', 'o'}, 's', function()
-  require('flash').jump()
-end)
 
 vim.keymap.set('n', '<Esc>', function()
   vim.cmd.noh()
@@ -290,3 +294,5 @@ vim.api.nvim_create_user_command('InsertBlogData', function()
   vim.api.nvim_buf_set_lines(0, current_row-1, current_row-1, false, template )
 
 end, {})
+
+

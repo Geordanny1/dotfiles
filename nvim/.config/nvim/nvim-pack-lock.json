@@ -28,6 +28,10 @@
       "rev": "ef8864bb42bf244f0295d1c5a403b27e3d139695",
       "src": "https://github.com/morhetz/gruvbox"
     },
+    "gruvbox-material": {
+      "rev": "11d779b26a9ab2b3db8c22c6ac9fb6e8ed4fea79",
+      "src": "https://github.com/sainnhe/gruvbox-material"
+    },
     "haskell-vim": {
       "rev": "f35d02204b4813d1dbe8b0e98cc39701a4b8e15e",
       "src": "https://github.com/neovimhaskell/haskell-vim"
@@ -63,6 +67,10 @@
     "nvim-treesitter": {
       "rev": "e289100ff98969e118c702199d88b764ce9e7fdf",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "onedark.vim": {
+      "rev": "47bec7a6196a843dad195d2666c3ac84c6e80c78",
+      "src": "https://github.com/joshdick/onedark.vim"
     },
     "oxide": {
       "rev": "838760c820821cce6a79706430883439c80dad4c",
@@ -100,9 +108,17 @@
       "rev": "40aedd8a68c78a656a10a8d62d80c54af59420fb",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
+    "tokyonight.nvim": {
+      "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
+      "src": "https://github.com/folke/tokyonight.nvim"
+    },
     "vague.nvim": {
       "rev": "73f8aaa866bf3d14dd0b0ab9e48c11794c1cb7ab",
       "src": "https://github.com/vague-theme/vague.nvim"
+    },
+    "vim": {
+      "rev": "f13f5dfbb784deddbc1d8195f34dfd9ec73e2295",
+      "src": "https://github.com/nordtheme/vim"
     },
     "vim-boring": {
       "rev": "1090b4bde142fbb2f5c9c5cfa08238c5eaeceb2f",

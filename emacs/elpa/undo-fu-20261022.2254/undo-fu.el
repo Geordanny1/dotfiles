@@ -1,0 +1,548 @@
+;;; undo-fu.el --- Undo helper with redo -*- lexical-binding: t -*-
+
+;; SPDX-License-Identifier: GPL-2.0-or-later
+;; Copyright (C) 2019  Campbell Barton, 2020 Free Software Foundation, Inc.
+
+;; Author: Campbell Barton <ideasman42@gmail.com>
+
+;; URL: https://codeberg.org/ideasman42/emacs-undo-fu
+;; Package-Version: 20261022.2254
+;; Package-Revision: 005ce713932d
+;; Package-Requires: ((emacs "25.1"))
+
+;;; Commentary:
+
+;; Undo/redo convenience wrappers to Emacs default undo commands.
+;;
+;; The redo operation can be accessed from a key binding
+;; and stops redoing once the initial undo action is reached.
+;;
+;; If you want to cross the initial undo boundary to access
+;; the full history, running [keyboard-quit] (typically C-g)
+;; lets you continue redoing for functionality not typically
+;; accessible with regular undo/redo.
+;;
+;; If you prefer [keyboard-quit] not interfere with undo behavior
+;; You may optionally set `undo-fu-ignore-keyboard-quit' & explicitly
+;; call `undo-fu-disable-checkpoint'.
+;;
+
+;;; Usage:
+
+;; ;; Bind the keys
+;; (global-unset-key (kbd "C-z"))
+;; (global-set-key (kbd "C-z")   'undo-fu-only-undo)
+;; (global-set-key (kbd "C-S-z") 'undo-fu-only-redo)
+
+;;; Code:
+
+;; ---------------------------------------------------------------------------
+;; Custom Variables
+
+(defgroup undo-fu nil
+  "Configure default behavior for undo-fu wrapper."
+  :group 'undo)
+
+(defcustom undo-fu-allow-undo-in-region nil
+  "When non-nil, use `undo-in-region' when a selection is present.
+Otherwise `undo-in-region' is never used, since it doesn't support `undo-only',
+causing redo to run without constraints when a selection exists."
+  :type 'boolean)
+
+(defcustom undo-fu-ignore-keyboard-quit nil
+  "When non-nil, don't use `keyboard-quit' to disable linear undo/redo behavior.
+
+Instead, explicitly call `undo-fu-disable-checkpoint'."
+  :type 'boolean)
+
+(defcustom undo-fu-trim t
+  "When non-nil, remove `undo-equiv-table' entries consumed by redo.
+Without this, undoing and redoing accumulates entries in the undo history,
+causing the number of steps to grow even though the buffer content is unchanged."
+  :type 'boolean)
+
+;; ---------------------------------------------------------------------------
+;; Internal Variables
+
+;; Apply undo/redo constraints to stop redo from undoing or
+;; passing the initial undo checkpoint.
+(defvar-local undo-fu--respect t)
+;; Initiated an undo-in region (don't use `undo-only').
+;; Only use when `undo-fu-allow-undo-in-region' is true.
+(defvar-local undo-fu--in-region nil)
+;; How the last redo was done, nil after undo:
+;; - `constrained': by the back-port, leaving `pending-undo-list' continuing the undo.
+;; - `unconstrained': by `undo', leaving `pending-undo-list' continuing the redo.
+;; Use in conjunction with `undo-fu--was-undo-or-redo' to ensure the value isn't stale.
+(defvar-local undo-fu--last-redo nil)
+;; List of interactive commands.
+(defconst undo-fu--commands
+  '(undo-fu-only-undo undo-fu-only-redo-all undo-fu-only-redo undo-fu-disable-checkpoint))
+
+;; ---------------------------------------------------------------------------
+;; Back-Ported Code
+;;
+;; `undo-redo' & `undo--last-change-was-undo-p' from Emacs 28, for older versions.
+;; WARNING: don't change this unless absolutely needed,
+;; keep it matching Emacs so it can be compared with the original.
+
+(defun undo-fu--backport-undo--last-change-was-undo-p (undo-list)
+  "Return the last changed undo state for UNDO-LIST, or nil if none.
+This checks if UNDO-LIST represents a state that resulted from an undo."
+  (declare (important-return-value t))
+  (gethash (undo-fu--undo-list-skip-boundaries undo-list) undo-equiv-table))
+
+(defun undo-fu--backport-undo-redo (&optional arg)
+  "Undo the last ARG undos."
+  (declare (important-return-value nil))
+  (cond
+   ((null (undo-fu--backport-undo--last-change-was-undo-p buffer-undo-list))
+    (user-error "No undone changes to redo"))
+   (t
+    (let* ((ul (undo-fu--undo-list-skip-boundaries buffer-undo-list))
+           (new-ul
+            (let ((undo-in-progress t))
+              (primitive-undo (or arg 1) ul)))
+           (new-pul (undo-fu--backport-undo--last-change-was-undo-p new-ul)))
+      (message "Redo%s"
+               (cond
+                (undo-in-region
+                 " in region")
+                (t
+                 "")))
+      (setq this-command 'undo)
+      (setq pending-undo-list new-pul)
+      (setq buffer-undo-list new-ul)))))
+
+
+;; ---------------------------------------------------------------------------
+;; Internal Functions/Macros
+
+(defun undo-fu--undo-list-skip-boundaries (undo-list)
+  "Return UNDO-LIST without its leading boundaries (nil elements)."
+  (declare (important-return-value t))
+  (while (and (consp undo-list) (null (car undo-list)))
+    (setq undo-list (cdr undo-list)))
+  undo-list)
+
+(defun undo-fu--undo-redo ()
+  "Redo a single step, wrapping `undo-fu--backport-undo-redo'."
+  (declare (important-return-value nil))
+  ;; The equiv-table key (as used by `undo-fu--backport-undo-redo').
+  (let ((ul (undo-fu--undo-list-skip-boundaries buffer-undo-list)))
+    ;; Redo never runs in region, clear the value left by the last undo (in any buffer)
+    ;; as `undo' does when restarting the chain.
+    ;; NOTE: the back-port only reads this for its "Redo in region" message, however
+    ;; the next undo continuing the chain inherits it, running in region.
+    (setq undo-in-region nil)
+    (undo-fu--backport-undo-redo 1)
+    ;; NOTE: `undo' can't continue from 'empty (see `undo-fu--last-change-can-redo-p'),
+    ;; it only maps a change to 'empty when `pending-undo-list' is the change, so use that.
+    ;; `undo-redo' has this bug, handled here to keep the back-port unchanged.
+    (when (eq pending-undo-list 'empty)
+      (setq pending-undo-list (undo-fu--undo-list-skip-boundaries buffer-undo-list)))
+    (when undo-fu-trim
+      ;; Remove the entry of the group consumed by redo so undo+redo cancels out.
+      ;; As only one group is redone, this is the only key it could contain.
+      ;;
+      ;; NOTE: while it may seem the entry value could be followed to remove more entries,
+      ;; the value is the position undo had reached in older history (used by `undo-only'
+      ;; to skip changes which were already undone), not the next group in this list.
+      ;; Removing entries found this way breaks `undo-only', so only remove this key.
+      (remhash ul undo-equiv-table))
+    ;; Record the redo, so the steps redone are kept as a redo when a later step fails
+    ;; (in practice only when narrowing hides a change from `primitive-undo').
+    ;; `this-command' too, as the back-port sets it to `undo'.
+    (setq this-command 'undo-fu-only-redo)
+    (setq undo-fu--last-redo 'constrained)))
+
+(defun undo-fu--redo-steps (steps)
+  "Redo up to STEPS steps, stopping once the last change isn't an undo.
+Steps redone are recorded as a redo even when a later step fails."
+  (declare (important-return-value nil))
+  ;; Redo one step at a time, passing STEPS to `primitive-undo' would continue past
+  ;; the undo steps, undoing (and discarding) the earlier history when STEPS is too large.
+  (let ((count 0))
+    (while (and (< count steps) (undo-fu--last-change-can-redo-p))
+      ;; Separate the changes made by this step from the group being redone.
+      ;; NOTE: after a step, `buffer-undo-list' starts with the next group's changes,
+      ;; so when a step fails part way, the changes it made would be added to
+      ;; that group, causing the next undo to finish the redo instead of reverting it.
+      ;; When the step succeeds, the boundary is removed with the changes it made.
+      ;; A step failing part way stays partially redone (as with `undo'),
+      ;; since rolling it back could fail the same way.
+      (undo-boundary)
+      (undo-fu--undo-redo)
+      (setq count (1+ count)))))
+
+(defun undo-fu--checkpoint-disable ()
+  "Disable using the checkpoint.
+
+This allows the initial boundary to be crossed when redoing."
+  (declare (important-return-value nil))
+  (setq undo-fu--respect nil)
+  (setq undo-fu--in-region nil))
+
+(defun undo-fu--checkpoint-reset-when-stale (was-undo-or-redo)
+  "Respect the checkpoint again when the last change wasn't an undo or redo.
+WAS-UNDO-OR-REDO is the result of `undo-fu--was-undo-or-redo'.
+
+This resets the checkpoint after running non-undo related commands."
+  (declare (important-return-value nil))
+  (unless (or undo-fu--respect was-undo-or-redo)
+    (when undo-fu-allow-undo-in-region
+      (setq undo-fu--in-region nil))
+    (setq undo-fu--respect t)))
+
+(defun undo-fu--quit-command ()
+  "Return the command used to step over the checkpoint.
+See: `undo-fu-ignore-keyboard-quit'."
+  (declare (important-return-value t))
+  (cond
+   (undo-fu-ignore-keyboard-quit
+    'undo-fu-disable-checkpoint)
+   (t
+    'keyboard-quit)))
+
+(defun undo-fu--checkpoint-update (was-undo-or-redo step-over-message)
+  "Update the checkpoint & region before undo/redo.
+WAS-UNDO-OR-REDO is the result of `undo-fu--was-undo-or-redo'.
+Show STEP-OVER-MESSAGE when the checkpoint is stepped over."
+  (declare (important-return-value nil))
+  (undo-fu--checkpoint-reset-when-stale was-undo-or-redo)
+
+  (when (region-active-p)
+    (cond
+     (undo-fu-allow-undo-in-region
+      (message "Undo in region in use. Undo checkpoint ignored!")
+      (undo-fu--checkpoint-disable)
+      (setq undo-fu--in-region t))
+     ;; Default behavior, just remove selection.
+     (t
+      (deactivate-mark))))
+
+  ;; Allow crossing the boundary, if we press [keyboard-quit].
+  ;; This allows explicitly over-stepping the boundary,
+  ;; in cases when users want to bypass this constraint.
+  (when undo-fu--respect
+    (when (memq last-command (list (undo-fu--quit-command) 'undo-fu-disable-checkpoint))
+      (undo-fu--checkpoint-disable)
+      (message "%s" step-over-message))))
+
+(defmacro undo-fu--with-advice (advice &rest body)
+  "Execute BODY with ADVICE temporarily enabled.
+
+Each advice is a triplet of (SYMBOL HOW FUNCTION),
+see `advice-add' documentation."
+  (declare (indent 1))
+  (let ((advice-list advice)
+        (body-let nil)
+        (body-advice-add nil)
+        (body-advice-remove nil)
+        (item nil))
+    (unless (listp advice-list)
+      (error "Advice must be a list"))
+    (cond
+     ((null advice-list)
+      (error "Advice must be a list containing at least one item"))
+     (t
+      (while (setq item (pop advice-list))
+        (unless (and (listp item) (eq 3 (length item)))
+          (error "Each advice must be a list of 3 items"))
+        (let ((fn-sym (gensym))
+              (fn-advise (pop item))
+              (fn-advice-ty (pop item))
+              (fn-body (pop item)))
+          ;; Build the calls for each type.
+          (push (list fn-sym fn-body) body-let)
+          (push (list 'advice-add fn-advise fn-advice-ty fn-sym) body-advice-add)
+          (push (list 'advice-remove fn-advise fn-sym) body-advice-remove)))
+      (setq body-let (nreverse body-let))
+      (setq body-advice-add (nreverse body-advice-add))
+
+      ;; Compose the call.
+      `(let ,body-let
+         (unwind-protect
+             (progn
+               ,@body-advice-add
+               ,@body)
+           ,@body-advice-remove))))))
+
+(defmacro undo-fu--with-message-suffix (suffix &rest body)
+  "Add text after the message output.
+Argument SUFFIX is the text to add at the end of the message.
+Optional argument BODY runs with the message suffix."
+  (declare (indent 1))
+  `(undo-fu--with-advice ((#'message
+                           :around
+                           (lambda (fn-orig arg &rest args)
+                             (apply fn-orig
+                                    (append (list (concat arg "%s")) args (list ,suffix))))))
+     ,@body))
+
+(defmacro undo-fu--with-messages-as-non-repeating-list (message-list &rest body)
+  "Run BODY adding any message call to the MESSAGE-LIST list."
+  (declare (indent 1))
+  `(let ((temp-message-list (list)))
+     (undo-fu--with-advice ((#'message
+                             :around
+                             (lambda (_ &rest args)
+                               (when message-log-max
+                                 (let ((message-text (apply #'format-message args)))
+                                   (unless (equal message-text (car temp-message-list))
+                                     (push message-text temp-message-list)))))))
+       (unwind-protect
+           (progn
+             ,@body)
+         ;; Protected.
+         (setq ,message-list (append ,message-list (nreverse temp-message-list)))))))
+
+(defun undo-fu--undo-unconstrained (steps)
+  "Call `undo' for STEPS, allowing previous undo steps to be undone (redoing them)."
+  (declare (important-return-value nil))
+  (undo-fu--with-message-suffix " (unconstrained)"
+    ;; Ignore the user's `undo-no-redo',
+    ;; as unconstrained undo/redo relies on `undo' undoing previous undo steps.
+    (let ((undo-no-redo nil))
+      (undo steps))))
+
+(defun undo-fu--undo-enabled-or-error ()
+  "Raise a user error when undo is disabled."
+  (declare (important-return-value nil))
+  (when (eq t buffer-undo-list)
+    (user-error "Undo has been disabled!")))
+
+(defun undo-fu--was-undo-or-redo ()
+  "Return t when the last destructive action was undo or redo."
+  (declare (important-return-value t))
+  (cond
+   ((undo-fu--backport-undo--last-change-was-undo-p buffer-undo-list)
+    t)
+   (t
+    nil)))
+
+(defun undo-fu--last-change-can-redo-p ()
+  "Return t when the last change is an undo step which can be redone."
+  (declare (important-return-value t))
+  ;; NOTE: `undo' maps a change to 'empty when it undoes nothing (a count of zero or
+  ;; consecutive boundaries), continuing the undo chain over it, so only redo checks this:
+  ;; the change isn't an undo, redoing it would undo it, removing it from the history.
+  ;; Emacs 27 and older map it to t, so it can't be detected there.
+  (let ((equiv (undo-fu--backport-undo--last-change-was-undo-p buffer-undo-list)))
+    (and equiv (not (eq equiv 'empty)))))
+
+;; ---------------------------------------------------------------------------
+;; Public Functions
+
+;;;###autoload
+(defun undo-fu-disable-checkpoint ()
+  "Remove the undo-fu checkpoint, making all future actions unconstrained.
+
+This command is needed when `undo-fu-ignore-keyboard-quit' is t,
+since in this case `keyboard-quit' cannot be used
+to perform unconstrained undo/redo actions."
+  (declare (important-return-value nil))
+  (interactive)
+  ;; Display an appropriate message.
+  (cond
+   ((null (undo-fu--was-undo-or-redo))
+    (message "Undo checkpoint disabled for next undo action!"))
+   ((null undo-fu--respect)
+    (message "Undo checkpoint already cleared!"))
+   (t
+    (message "Undo checkpoint cleared!")))
+
+  (undo-fu--checkpoint-disable))
+
+;; Uses Emacs 28's `undo-redo' (back-ported).
+;;;###autoload
+(defun undo-fu-only-redo-all ()
+  "Redo all actions until the initial undo step."
+  (declare (important-return-value nil))
+  (interactive "*")
+  ;; Raise error since we can't do anything useful in this case.
+  (undo-fu--undo-enabled-or-error)
+  (let ((message-list (list)))
+    (undo-fu--with-messages-as-non-repeating-list message-list
+      (undo-fu--redo-steps most-positive-fixnum))
+    (dolist (message-text message-list)
+      (message "%s All" message-text))))
+
+;; Uses Emacs 28's `undo-redo' (back-ported).
+;;;###autoload
+(defun undo-fu-only-redo (&optional arg)
+  "Redo an action until the initial undo action.
+
+Optional argument ARG The number of steps to redo."
+  (declare (important-return-value nil))
+  (interactive "*p")
+  ;; Raise error since we can't do anything useful in this case.
+  (undo-fu--undo-enabled-or-error)
+
+  ;; Assign `was-undo-or-redo', `was-redo' & `was-undo' for convenience.
+  (let* ((steps (or arg 1))
+         (was-undo-or-redo (undo-fu--was-undo-or-redo))
+         (was-redo (and was-undo-or-redo undo-fu--last-redo))
+         (was-undo (and was-undo-or-redo (null was-redo))))
+
+    (undo-fu--checkpoint-update was-undo-or-redo "Redo checkpoint stepped over!")
+
+    (cond
+     ((< steps 1)
+      ;; Redo nothing (a count below 1), returning before the undo/redo state is changed
+      ;; (otherwise unconstrained undo would reverse after redoing nothing).
+      ;; NOTE: this follows `undo-fu--checkpoint-update' so [keyboard-quit] steps over
+      ;; the checkpoint & the region is deactivated, as with any other count.
+      ;; `undo' isn't called (when unconstrained), as it would show a message
+      ;; although nothing is redone, and may replace `pending-undo-list' & `buffer-undo-list'.
+      t)
+     (t
+      (when undo-fu--respect
+        (when (null (undo-fu--last-change-can-redo-p))
+          (user-error "Redo without undo step (%s to ignore)"
+                      (substitute-command-keys
+                       (format "\\[%s]" (symbol-name (undo-fu--quit-command)))))))
+
+      (let* ((last-command
+              (cond
+               (was-undo
+                ;; Break undo chain, avoid having to press [keyboard-quit].
+                'ignore)
+               ((eq was-redo 'constrained)
+                ;; Break the chain so `undo' redoes the next undo step.
+                ;; NOTE: the back-port leaves `pending-undo-list' continuing the undo
+                ;; (as `undo-redo' does), which unconstrained undo after a constrained redo
+                ;; relies on.
+                'ignore)
+               ((eq was-redo 'unconstrained)
+                ;; Checked by the undo function.
+                'undo)
+               ((eq last-command 'keyboard-quit)
+                ;; This case needs to be explicitly detected.
+                ;; If we undo until there is no undo information left,
+                ;; then press `keyboard-quit' and redo, it fails without this case.
+                'ignore)
+               (t
+                ;; No change.
+                last-command)))
+             (success
+              (condition-case err
+                  (progn
+                    (cond
+                     (undo-fu--respect
+                      (undo-fu--redo-steps steps))
+                     (t
+                      (undo-fu--undo-unconstrained steps)
+                      (setq undo-fu--last-redo 'unconstrained)))
+                    t)
+                (error
+                 (message "%s" (error-message-string err))
+                 nil))))
+
+        (setq this-command 'undo-fu-only-redo)
+        success)))))
+
+;;;###autoload
+(defun undo-fu-only-undo (&optional arg)
+  "Undo the last action.
+
+Wraps the `undo-only' function.
+
+Optional argument ARG the number of steps to undo."
+  (declare (important-return-value nil))
+  (interactive "*p")
+  ;; Raise error since we can't do anything useful in this case.
+  (undo-fu--undo-enabled-or-error)
+
+  ;; Assign `was-undo-or-redo' & `was-redo' for convenience.
+  (let* ((steps (or arg 1))
+         (was-undo-or-redo (undo-fu--was-undo-or-redo))
+         (was-redo (and was-undo-or-redo undo-fu--last-redo)))
+
+    (undo-fu--checkpoint-update was-undo-or-redo "Undo checkpoint ignored!")
+
+    (cond
+     ((< steps 1)
+      ;; Undo nothing (a count below 1), returning before the undo/redo state is changed
+      ;; (otherwise unconstrained redo would reverse after undoing nothing).
+      ;; NOTE: this follows `undo-fu--checkpoint-update' so [keyboard-quit] steps over
+      ;; the checkpoint & the region is deactivated, as with any other count.
+      ;; `undo' isn't called, as it would show an "Undo" message and map the last change
+      ;; to 'empty in `undo-equiv-table' (see: `undo-fu--last-change-can-redo-p').
+      t)
+     (t
+      ;; Swap in 'undo' for our own function name.
+      ;; Without this undo won't stop once the first undo step is reached.
+      (let* ((last-command
+              (cond
+               ;; Special case, to avoid being locked out of the undo-redo chain.
+               ;; Without this, continuously redoing will end up in a state
+               ;; where undo & redo fails.
+               ;;
+               ;; Detect this case and break the chain. Only do this when previously redoing
+               ;; otherwise undo will reverse immediately once it reaches the beginning,
+               ;; which we don't want even when unconstrained,
+               ;; as we don't want to present the undo chain as infinite in either direction.
+               ((and was-redo (null undo-fu--respect) (eq t pending-undo-list))
+                'ignore)
+               (was-undo-or-redo
+                ;; Checked by the undo function.
+                'undo)
+               (t
+                ;; No change.
+                last-command)))
+             (success
+              (condition-case err
+                  (progn
+                    (cond
+                     ((and undo-fu--respect (null undo-fu--in-region))
+                      (undo-only steps))
+                     (t
+                      (undo-fu--undo-unconstrained steps)))
+                    t)
+                (error
+                 (message "%s" (error-message-string err))
+                 nil))))
+
+        (when success
+          (setq undo-fu--last-redo nil))
+
+        (setq this-command 'undo-fu-only-undo)
+        success)))))
+
+;; ---------------------------------------------------------------------------
+;; Public Functions (Extra Utilities)
+
+;;;###autoload
+(defun undo-fu-clear-all ()
+  "Clear all undo/redo steps."
+  (interactive)
+  ;; NOTE: don't touch `undo-equiv-table' as this is global,
+  ;; since it uses weak references, clearing these values is sufficient.
+  (setq buffer-undo-list nil)
+  (setq pending-undo-list nil))
+
+
+;; Evil Mode (setup if in use)
+;;
+;; Don't let these commands repeat.
+;;
+;; Notes:
+;; - Package lint complains about using this command,
+;;   however it's needed to avoid issues with `evil-mode'.
+(declare-function evil-declare-not-repeat "ext:evil-common")
+(with-eval-after-load 'evil
+  (mapc #'evil-declare-not-repeat undo-fu--commands))
+
+;; `aggressive-indent-mode' (setup if in use).
+(defvar aggressive-indent-protected-commands)
+(with-eval-after-load 'aggressive-indent
+  (setq aggressive-indent-protected-commands
+        (append aggressive-indent-protected-commands undo-fu--commands)))
+
+(provide 'undo-fu)
+;; Local Variables:
+;; fill-column: 99
+;; indent-tabs-mode: nil
+;; End:
+;;; undo-fu.el ends here

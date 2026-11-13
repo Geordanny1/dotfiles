@@ -1,15 +1,15 @@
 
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (concat user-emacs-directory "/custom.el"))
+
+(load-file custom-file)
 
 (push '(fullscreen . maximized) default-frame-alist)
 
-(when (file-exists-p custom-file)
-  (load custom-file))
+(setq warning-suppress-types '((files))
+      warning-suppress-log-types '((files)))
 
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 (setq make-backup-files nil) ; stop creating ~ files
@@ -20,12 +20,19 @@
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
-(global-visual-line-mode 1)
-
+(electric-pair-mode 1)
 (global-display-line-numbers-mode 1)
 
-(electric-pair-mode 1)
-(use-package vterm
+(global-visual-line-mode 1)
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		eshell-mode-hook))
+  (add-hook mode(lambda () (display-line-numbers-mode 1))))
+
+
+;; packages
+
+(use-package htmlize
   :ensure t)
 
 ;; Org relate things 
@@ -49,8 +56,11 @@
 
 ;; Evil relate things
 
-(unless (package-installed-p 'undo-tree)
-  (package-install 'undo-tree))
+(use-package undo-tree
+  :ensure t)
+
+(use-package undo-fu
+  :ensure t)
 
 (unless (package-installed-p 'undo-fu)
   (package-install 'undo-fu))
@@ -58,7 +68,6 @@
 (use-package evil
   :ensure t
   :init
-  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
   (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
@@ -68,6 +77,11 @@
   :ensure t
   :config
   (evil-collection-init))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
 
 (use-package general
   :ensure t)
@@ -83,10 +97,7 @@
   "o i" 'org-roam-node-insert
   "f"   'load-file)
 
-(setq evil-insert-state-cursor '(box "black"))
-
 ;; Vertico things
-
 (use-package vertico
   :custom
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
@@ -94,7 +105,6 @@
   :init
   (vertico-mode))
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
   :init
   (savehist-mode))
@@ -121,39 +131,3 @@
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-(add-hook 'vterm-mode-hook #'(lambda () (display-line-numbers-mode -1)))
-
-;; Auto completation
-
-(use-package corfu
-  :ensure t
-  :init
-  (global-corfu-mode))
-
-;; Use Dabbrev with Corfu!
-(use-package dabbrev
-  ;; Swap M-/ and C-M-/
-  :bind (("C-/" . dabbrev-completion)
-         ("C-M-/" . dabbrev-expand))
-  :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
-
-(use-package doom-themes
-  :ensure t
-  :custom
-  ;; Global settings (defaults)
-  (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
-  (doom-themes-enable-italic nil) ; if nil, italics is universally disabled
-  ;; for treemacs users
-  :config
-  (load-theme 'doom-acario-light)
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; Enable custom neotree theme (nerd-icons must be installed!)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
